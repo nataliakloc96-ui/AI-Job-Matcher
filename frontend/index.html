@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>AI Job Matcher</h2>
+
+<textarea id="cv" placeholder="Paste CV"></textarea>
+<button onclick="match()">Match Jobs</button>
+
+<pre id="out"></pre>
+
+<script>
+const API = "https://YOUR-RENDER-URL";
+
+async function match() {
+    const cv = document.getElementById("cv").value;
+
+    const res = await fetch(`${API}/match?user_cv=${encodeURIComponent(cv)}`, {
+        method: "POST"
+    });
+
+    const data = await res.json();
+    document.getElementById("out").innerText =
+        JSON.stringify(data, null, 2);
+}
+</script>
+
+</body>
+</html>
