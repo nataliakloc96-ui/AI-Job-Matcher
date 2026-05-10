@@ -31,18 +31,32 @@ def match(user_cv: str):
     conn = get_conn()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT title, company, description FROM job")
+    cursor.execute("""
+                   SELECT title, company, description 
+                   FROM job
+        """)
     jobs = cursor.fetchall()
 
     results = []
 
-    for j in job:
+    for j in jobs:
         jo = {
             "title": j[0],
             "company": j[1],
-            "description": j[2]
+            "location": j[2],
+            "description": j[3]
         }
-        result = match_job(user_cv, jo)
-        results.append(result)
 
-    return {"matches": results}
+        ai = match_job(user_cv, jo)
+    
+        results.append({
+            "title": jo["title"],
+            "company": jo["company"],
+            "location": jo["location"],
+            "score": ai["score"],
+            "reason": ai["reason"]
+        })
+    
+    results.sort(key=lambda x: x["score"], reverse=True)
+
+    return {"matches": results[:10]}
