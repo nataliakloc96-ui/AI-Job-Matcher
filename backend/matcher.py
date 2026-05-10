@@ -1,11 +1,13 @@
-import openai
+import openai import OpenAI
 import os
+import json
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 
 def match_job(cv, job):
     prompt = f"""
-You are a job matching AI.
+Compare CV to job offer.
 
 CV: 
 {cv}
@@ -13,17 +15,20 @@ CV:
 JOB:
 Title: {job['title']}
 Company: {job['company']}
-Description: {job.get('description', '')}
+Description: {job['description']}
 
-Return JSON:
+Return ONLY valid JSON:
 {{
-    "score": 0-100,
+    "score": number,,
     "reason": "short explanation"
 }}
 """
-    response = openai.Completion.create(
+    response = client.chat.completions.create(
         model="gpt-40-mini",
-        messages=[{"role": "user", "content": prompt}]
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.2
     )
 
-    return response["choices"][0]["message"]["content"]
+    content = response.choices[0].message.content
+    return json.loads(content)
+
