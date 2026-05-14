@@ -1,0 +1,7 @@
+fastapi
+openai
+psycopg2-binary
+uvicorn
+requests
+os
+json
