@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from db import get_conn
 from matcher import match_job
+from fastapi.middleware.cors import CORSMiddleware
 
 
 
