@@ -21,34 +21,46 @@ async function match() {
 
     const res = await fetch(
         `${API}/match?user_cv=${encodeURIComponent(cv)}`,
-        { method:"POST" }
+        { method: "POST" }
     );
 
     const data = await res.json();
 
+    console.log(data);
+
     const div = document.getElementById("results");
 
+    if (data.error) {
+        div.innerHTML = `<h2>Backend error:</h2><pre>${data.error}</pre>`;
+        return;
+    }
+
+    if (!data.matches) {
+        div.innerHTML = "<h2>No matches returned</h2>";
+        return;
+    }
+
     div.innerHTML = data.matches.map(job => `
-    <div style="border:1px solid #ccc;padding:20px;margin:20px;">
-    <h2>${job.title}</h2>
-    <b>${job.company}</b><br>
-    ${job.location}<br><br>
+        <div style="border:1px solid #ccc;padding:20px;margin:20px;">
+            <h2>${job.title}</h2>
+            <b>${job.company}</b><br>
+            ${job.location}<br><br>
 
-    <h3>Match: ${job.score}%</h3>
+            <h3>Match: ${job.score}%</h3>
 
-    <p>${job.reason}</p>
+            <p>${job.reason}</p>
 
-    <b>Strengths:</b>
-    <ul>
-        ${job.strengths.map(s => `<li>${s}</li>`).join("")}
-    </ul>
+            <b>Strengths:</b>
+            <ul>
+                ${job.strengths.map(s => `<li>${s}</li>`).join("")}
+            </ul>
 
-    <b>Missing Skills:</b>
-    <ul>
-        ${job.missing_skills.map(s => `<li>${s}</li>`).join("")}
-    </ul>
-</div>
-`).join("")
+            <b>Missing Skills:</b>
+            <ul>
+                ${job.missing_skills.map(s => `<li>${s}</li>`).join("")}
+            </ul>
+        </div>
+    `).join("");
 }
 </script>
 
