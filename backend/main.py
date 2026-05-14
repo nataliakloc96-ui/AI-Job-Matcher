@@ -6,6 +6,16 @@ from matcher import match_job
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://ai-job-matcher-phi.vercel.app"
+        ],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+)
+
 
 @app.get("/")
 def root():
@@ -20,45 +30,39 @@ def health():
 
 @app.post("/match")
 def match(user_cv: str):
-    conn = get_conn()
-    cursor = conn.cursor()
+    try:
+        jobs = [
+            {
+                "title": "Python Backend Developer",
+                "company": "OpenAI Labs",
+                "location": "Remote",
+                "description": "Python FastAPI PostgreSQL Docker APIs"
+            }
+        ]
 
-    cursor.execute("""
-                   SELECT title, company, description 
-                   FROM job
-        """)
-    jobs = cursor.fetchall()
+        results = []
 
-    results = []
+
 
     for j in jobs:
-        jo = {
-            "title": j[0],
-            "company": j[1],
-            "location": j[2],
-            "description": j[3]
-        }
-
-        ai = match_job(user_cv, jo)
+        ai = match_job(user_cv, j)
     
         results.append({
-            "title": jo["title"],
-            "company": jo["company"],
-            "location": jo["location"],
-            "score": ai["score"],
-            "reason": ai["reason"],
-            "strengths": ai["strengths"],
-            "missing_skills": ai["missing_skills"]
+            "title": j["title"],
+            "company": j["company"],
+            "location": j["location"],
+            **ai
         })
     
-    results.sort(
-        key=lambda x: x["score"],
-        reverse=True
-    )
-
+   
     return {
-        "matches": results[:10]
+        "matches": results
     }
+    except Exception as e:
+        return {
+            "error": str(e)
+        }
+
     
     
 @app.get("/job")
