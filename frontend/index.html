@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Job Matcher</title>
+</head>
+<body>
+
+<h1>AI Job Matcher</h1>
+
+<textarea id="cv" rows="12" cols="80"></textarea>
+<br>
+<button onclick="match()">Match</button>
+
+<div id="results"></div>
+
+<script>
+const API = "https://YOUR-RENDER-URL";
+
+async function match() {
+    const cv = document.getElementById("cv").value;
+
+    const res = await fetch(
+        `${API}/match?user_cv=${encodeURIComponent(cv)}`,
+        { method:"POST" }
+    );
+
+    const data = await res.json();
+
+    const div = document.getElementById("results");
+
+    div.innerHTML = data.matches.map(job => `
+        <div style="
+            border:1px solid #ccc;
+            margin:10px;
+            padding:15px;
+        ">
+            <h3>${job.title}</h3>
+            <b>${job.company}</b><br>
+            ${job.location}<br><br>
+
+            Match Score: <b>${job.score}%</b><br>
+            ${job.reason}
+        </div>
+    `).join("");
+}
+</script>
+
+</body>
+</html>
