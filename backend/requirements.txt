@@ -1,6 +1,6 @@
 fastapi
 openai
-python-multipart
+python-dotenv
 uvicorn
-psycopg2
+psycopg2-binary
 
