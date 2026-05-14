@@ -60,22 +60,21 @@ def match(user_cv: str):
             "company": jo["company"],
             "location": jo["location"],
             "score": ai["score"],
-            "reason": ai["reason"]
+            "reason": ai["reason"],
+            "strengths": ai["strengths"],
+            "missing_skills": ai["missing_skills"]
         })
     
-    match_cache = {}
-    cache_key = user_cv + jo["title"]
+    results.sort(
+        key=lambda x: x["score"],
+        reverse=True
+    )
 
-    if cache_key in match_cache:
-        ai = match_cache[cache_key]
-    else:
-        ai = match_job(user_cv, jo)
-        match_cache[cache_key] = ai
-
+    return {
+        "matches": results[:10]
+    }
     
-    results.sort(key=lambda x: x["score"], reverse=True)
-
-    return {"matches": results[:10]}
+    
 
 @app.get("/health")
 def health():
