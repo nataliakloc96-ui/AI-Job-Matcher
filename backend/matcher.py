@@ -38,7 +38,7 @@ Return ONLY valid JSON:
 """
     
     response = client.chat.completions.create(
-        model = "gpt-40-mini",
+        model = "gpt-4o-mini",
         temperature = 0.2,
         response_format={"type": "json_object"},
         messages = [{"role": "user", "content": prompt}]
