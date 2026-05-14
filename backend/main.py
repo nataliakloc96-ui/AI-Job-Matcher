@@ -42,27 +42,23 @@ def match(user_cv: str):
 
         results = []
 
+        for job in jobs:
+            ai = match_job(user_cv, job)
 
+            results.append({
+                "title": job["title"],
+                "company": job["company"],
+                "location": job["location"],
+                "score": ai["score"],
+                "reason": ai["reason"],
+                "strengths": ai["strengths"],
+                "missing_skills": ai["missing_skills"]
+            })
 
-    for j in jobs:
-        ai = match_job(user_cv, j)
-    
-        results.append({
-            "title": j["title"],
-            "company": j["company"],
-            "location": j["location"],
-            **ai
-        })
-    
-   
-    return {
-        "matches": results
-    }
+        return {"matches": results}
+
     except Exception as e:
-        return {
-            "error": str(e)
-        }
-
+        return {"error": str(e)}
     
     
 @app.get("/job")
