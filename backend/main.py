@@ -7,30 +7,16 @@ from matcher import match_job
 app = FastAPI()
 
 
+@app.get("/")
+def root():
+    return {"status": "AI Job Matcher is running!"}
 
-@app.get("/job")
-def get_job():
-    conn = get_conn()
-    cursor = conn.cursor()
 
-    cursor.execute("SELECT id, title, company, location, description FROM job")
+@app.get("/health")
+def health():
+    return {"ok": True}
 
-    rows = cursor.fetchall()
 
-    cursor.close()
-    conn.close()
-
-    return {
-        "jobs": [
-            {
-                "id": r[0],
-                "title": r[1],
-                "company": r[2],
-                "location": r[3],
-                "description": r[4]
-            } for r in rows
-        ]
-    }
 
 @app.post("/match")
 def match(user_cv: str):
@@ -75,7 +61,27 @@ def match(user_cv: str):
     }
     
     
+@app.get("/job")
+def get_job():
+    conn = get_conn()
+    cursor = conn.cursor()
 
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+    cursor.execute("SELECT id, title, company, location, description FROM job")
+
+    rows = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return {
+        "jobs": [
+            {
+                "id": r[0],
+                "title": r[1],
+                "company": r[2],
+                "location": r[3],
+                "description": r[4]
+            } for r in rows
+        ]
+    }
+
